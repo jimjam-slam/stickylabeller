@@ -12,7 +12,7 @@ devtools::install_github("rensa/stickylabeller")
 
 ## Use
 
-The package has just one function: `label_glue`. Give it a string template to be processed by `glue`, and it'll return a labelling function that you can pass to `ggplot2::facet_wrap`:
+The package has just one function: `label_glue`. Give it a string template to be processed by `glue`, and it'll return a labelling function that you can pass to `facet_*`:
 
 ```r
 library(stickylabeller)
@@ -30,7 +30,18 @@ ggplot(mydf) +
   facet_wrap(
     ~ red + blue,
     labeller = label_glue('Red is {red}\nand blue is {blue}'))
+```
 
+[pic here]
+
+```
+ggplot(mydf) +
+  geom_point(aes(x = x, y = y)) +
+  facet_grid(
+  red ~ blue,
+  labeller = labeller(
+    .rows = label_glue('Red is {red}'),
+    .cols = label_glue('Blue is {blue}')))
 ```
 
 Your `label_glue` labeller can refer to any of the data frame columns included in the facetting formula. It can also use those columns in expressions, like:
@@ -53,7 +64,10 @@ So you can automatically number your facets like:
 label_glue('({.l}) Red is {toupper(red)}\nand blue is {blue}')
 ```
 
-**NOTE:** `.l` and `.L` only currently support up to 26 facets—I haven't yet implemented a way for them to continue with AA, AB, AC, etc.
+#### Limitations
+
+* `.l` and `.L` only currently support up to 26 facets—I haven't yet implemented a way for them to continue with AA, AB, AC, etc.
+* `.n`, `.l` and `.L` only work with `facet_wrap` for now; if you use them with `facet_grid`, things will   probably go bad. If you have ideas about how I can implement this, I'd love to hear from you!
 
 ### Including summary statistics in facet labels
 
@@ -87,7 +101,7 @@ This works even if you're facetting by multiple columns and summarising by multi
 
 ## To-do
 
-- [ ] Make sure this works with `facet_grid` as well;
+- [ ] Get facet numbering working with `facet_grid`
 - [ ] Pass the named arguments of `glue` on, so that you can use things like temporary variables and custom delimiters
 
-Have fun!
+Have fun! If you hit any snags, please feel free to [file an issue here](https://github.com/rensa/stickylabeller/issues) so that I can get on it! <3

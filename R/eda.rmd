@@ -1,0 +1,120 @@
+---
+title: "Glue Label EDA"
+output: html_notebook
+---
+
+Okay,let's load some dependencies up:
+```{r}
+library(tidyverse)
+library(glue)
+print("Let's load some stuff.")
+```
+
+Now here's my labeller function. For now, I'm working on `facet_wrap`; I'll come back to `facet_grid`.
+
+```{r}
+
+label_glue <- function(template) {
+  
+  # here's the inner function. label_glue returns this, but it can access the
+  # template string given when the user calls label_glue
+  label_glue_inner <- function(labels) {
+    
+    # TODO - I can check the `facet` attribute to see whether it's a wrap
+    # or a grid, and the `type` attribute to see rows or columns (direction?)
+    # facet_type <- attr(labels, "facet")
+    facet_count <- nrow(labels)
+    
+    # convert incoming labels to strings and add extra columns
+    labels = lapply(labels, as.character)
+    labels[[".n"]] <- as.character(1:facet_count)
+    labels[[".l"]] <- letters[1:facet_count]
+    labels[[".L"]] <- toupper(letters[1:facet_count])
+    
+    new_labels = glue_data(labels, template)
+    print(labels)
+    print(new_labels)
+    list(unname(new_labels))
+  }
+  class(label_glue_inner) <- c("function", "labeller")
+  
+  return(label_glue_inner)
+  
+}
+```
+
+Now, we need some test data and some plots!
+
+```{r}
+mydf = data_frame(
+  x = 1:90,
+  y = rnorm(90),
+  red = rep(letters[1:3], 30),
+  blue = c(rep(1, 30), rep(2, 30), rep(3, 30)))
+mydf
+```
+
+```{r}
+ggplot(mydf) +
+  geom_point(aes(x = x, y = y)) +
+  facet_wrap(~ red + blue, labeller = label_glue('({.L}) Red is {toupper(red)}\nand blue is {blue}'))
+```
+
+## Notes
+
+As far as I can tell, the `labels` argument given to the labeller function is a `data.frame` whose columns are named for the facetting columns and whose rows take the possible values of those columns, _in the order they will be plotted._ Cool.
+
+The value of the function is a list containing character vectors of the output labels. Each vector has elements for each facet. If `multi_line = TRUE`, the list has a separate vector for each line; if it's `FALSE`, the list has _one_ character vector containing each facet's entire label.
+
+## Ways to bring facet stats into the label
+
+### Method 1: refer to a separate, named vector
+
+I can use facet those columns to refer to other variables. For example, if I have facet columns `red` and `blue`, and I have a vector named for the values of one of the facet columns, like `mydf_stats = c("1" = 52.7, "2" = 63.9, "3" = 88.109)`, then I can use a template like `"Red is {red} and the stat is {mydf_stats[red]}"` to refer to some calculated summary statistic of the facet. Or, I can calculate a summary from the original data and grab a named vector from that:
+
+```{r}
+mydf_summary = mydf %>% group_by(red) %>% summarise(mean = sprintf('%#.2f', mean(y))) %>% print()
+somestat = set_names(mydf_summary$mean, mydf_summary$red) %>% print()
+
+```
+
+Either way, I can then refer to this named vector in the template, like: `Red is {red} (mean = {somestat[red]})`:
+
+```{r}
+ggplot(mydf) +
+  geom_point(aes(x = x, y = y)) +
+  facet_wrap(~ red, labeller = label_glue('({.L}) Red is {red} (mean = {somestat[red]})'))
+
+```
+
+### Method 2: join the summary back to the original data
+
+The other way to go here is to summarise the data, then join this back to the original dataset, creating a new column with the summary stat. This is probably not very performant, as you're essentially repeating the summary stat for every row within the facet, but it does make the plotting code much easier to read, especially if you're facetting across several variables—you only need to remember to include the summary stats in the facetting formula:
+
+```{r}
+mydf2 = mydf %>% inner_join(mydf_summary) %>% print()
+ggplot(mydf2) +
+  geom_point(aes(x = x, y = y)) +
+  facet_wrap(~ red + mean, labeller = label_glue('({.L}) Red is {red} (mean = {mean})'))
+
+```
+
+Or with several facetting variables and/or summary stats:
+
+```{r}
+multi_summary = mydf %>%
+  group_by(red, blue) %>%
+  summarise(
+    mean_y = sprintf('%#.2f', mean(y)),
+    sd_y = sprintf('%#.2f', sd(y))) %>%
+  ungroup() %T>%
+  print()
+mydf3 = mydf %>%
+  inner_join(multi_summary) %T>%
+  print()
+
+ggplot(mydf3) +
+  geom_point(aes(x = x, y = y)) +
+  facet_wrap(~ red + blue + mean_y + sd_y, labeller = label_glue('({.L}) Red = {red}, blue = {blue}\n(mean = {mean_y}, SD = {sd_y})'))
+```
+
