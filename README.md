@@ -34,7 +34,7 @@ ggplot(mydf) +
 
 ![facet_wrap labelled with two facet column values](man/figures/example1.png)
 
-```
+```r
 ggplot(mydf) +
   geom_point(aes(x = x, y = y)) +
   facet_grid(
@@ -81,7 +81,7 @@ ggplot(mydf) +
 
 There are a couple of ways to include summary statistics using `stickylabeller`. The most flexible way (but probably not the most performant, if you're working with a _massive_ dataset) is to summarise your data and join it back to the original data, so that the summary statistics appear as new columns in the original data. Then include the summary columns in your facetting specification:
 
-```
+```r
 library(dplyr)
 
 # summarise the data
