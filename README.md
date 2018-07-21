@@ -1,4 +1,4 @@
-# sticklabeller
+# stickylabeller
 
 The `stickylabeller` package helps you label the facets in your ggplot2 plots. If you know how to use the [`glue`](https://cran.r-project.org/web/packages/glue/index.html) package, you know how to use `stickylabeller`!
 
@@ -32,7 +32,7 @@ ggplot(mydf) +
     labeller = label_glue('Red is {red}\nand blue is {blue}'))
 ```
 
-![facet_wrap labelled with two facet column values]('man/figures/example1.png')
+![facet_wrap labelled with two facet column values](man/figures/example1.png)
 
 ```
 ggplot(mydf) +
@@ -44,7 +44,7 @@ ggplot(mydf) +
       cols = 'Blue is {blue}'))
 ```
 
-![facet_grid labelled with one facet column value on each margin]('man/figures/example2.png')
+![facet_grid labelled with one facet column value on each margin](man/figures/example2.png)
 
 Your `label_glue` labeller can refer to any of the data frame columns included in the facetting formula. It can also use those columns in expressions, like:
 
@@ -70,7 +70,7 @@ ggplot(mydf) +
     labeller = label_glue('({.l}) Red is {toupper(red)}\nand blue is {blue}'))
 ```
 
-![facet_wrap labelled with two facet column values and numbered (a), (b), (c), ...]('man/figures/example3.png')
+![facet_wrap labelled with two facet column values and numbered (a), (b), (c), ...](man/figures/example3.png)
 
 #### Limitations
 
@@ -106,7 +106,7 @@ ggplot(mydf) +
 
 ```
 
-![facet_wrap labelled with two facet column values and two summary statistics, each numbered (a), (b), (c), ...]('man/figures/example4.png')
+![facet_wrap labelled with two facet column values and two summary statistics, each numbered (a), (b), (c), ...](man/figures/example4.png)
 
 This works even if you're facetting by multiple columns and summarising by multiple columns. Keep in mind, however, that if you're going to continue to work with the data after plotting, you might want to drop the summary columns in order to avoid confusing yourself.
 
