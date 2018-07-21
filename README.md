@@ -67,7 +67,7 @@ label_glue('({.l}) Red is {toupper(red)}\nand blue is {blue}')
 #### Limitations
 
 * `.l` and `.L` only currently support up to 26 facets—I haven't yet implemented a way for them to continue with AA, AB, AC, etc.
-* `.n`, `.l` and `.L` only work with `facet_wrap` for now; if you use them with `facet_grid`, things will   probably go bad. If you have ideas about how I can implement this, I'd love to hear from you!
+* `.n`, `.l` and `.L` only work with `facet_wrap` for now. See [Issue #1](https://github.com/rensa/stickylabeller/issues/1).
 
 ### Including summary statistics in facet labels
 
@@ -99,9 +99,6 @@ ggplot(mydf) +
 ```
 This works even if you're facetting by multiple columns and summarising by multiple columns. Keep in mind, however, that if you're going to continue to work with the data after plotting, you might want to drop the summary columns in order to avoid confusing yourself.
 
-## To-do
-
-- [ ] Get facet numbering working with `facet_grid`
-- [ ] Pass the named arguments of `glue` on, so that you can use things like temporary variables and custom delimiters
+An alternate way to accomplish this is to convert each of your summary statistics into a vector named for the values of your facet column. This gets really messy with more than one facet column, though!
 
 Have fun! If you hit any snags, please feel free to [file an issue here](https://github.com/rensa/stickylabeller/issues) so that I can get on it! <3

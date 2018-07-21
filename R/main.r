@@ -1,15 +1,22 @@
-#' Label facets with glue.
+#' Label facets with a string template.
 #'
 #' \code{label_glue} returns a labeller function that you can give to the
-#'   `labeller` argument of a `facet_*` function.
+#' \code{labeller} argument of a \code{facet_*} function. If you're using
+#' \code{label_glue} with \code{facet_wrap} or you're individually supplying
+#' labellers to each variable, you only need one string template. If you're
+#' using it with \code{facet_grid} directly, you need to give two templates:
+#' \code{rows} and \code{cols}.
 #'
-#' @param template A string to be used as the template by \code{glue}. Wrap
-#'   facet columns in braces, as you would in \code{glue}. If you're using
-#'   the labeller with \code{facet_wrap}, you can also use \code{.n},
-#'   \code{.l} or \code{.L} to add numbers or letters to each facet.
-#'   you're supplying this \code{}
-#' @return A labelling function that you can give to the `labeller` argument
-#'   of a `facet_*` function.
+#' If you're using
+#' the labeller with \code{facet_wrap}, you can also use \code{.n},
+#' \code{.l} or \code{.L} to add numbers or letters to each facet. The latter
+#' two only presently support up to 26 facets.
+#'
+#' @param rows A string to be used as the template by \code{glue}.
+#' @param cols A string to be used as the template by \code{glue}.
+#'
+#' @return A labelling function that you can give to the \code{labeller} argument
+#'   of a \code{facet_*} function.
 #' @examples
 #' library(ggplot2)
 #' library(stickylabeller)
@@ -26,23 +33,22 @@
 #'   ~  Species,
 #'   labeller = label_glue('({.n}) {Species}'))
 #'
-#' # you can also use label_glue with facet_grid, either to label individual
-#' # variables or entire margins
+#' # you can also use label_glue with facet_grid
 #' p2 <- ggplot(mtcars, aes(x = disp, y = mpg)) + geom_point()
 #' p2 + facet_grid(
 #'   gear ~ cyl,
-#'   labeller = labeller(
-#'     .rows = label_glue('{gear} gears'),
-#'     .cols = label_glue('{cyl} cylinders')))
+#'   labeller = label_glue(
+#'     rows = '{gear} gears',
+#'     cols = '{cyl} cylinders'))
 #'
 #' # you can add summary statistics in a couple of ways. the easiest (in terms
 #' # of plot code) is to join a summary back into the original data and to add
 #' # the new columns in the facet spec
-#' library(tidyverse)
+#' library(dplyr)
 #' cyl_stats <- mtcars %>%
 #'   group_by(cyl) %>%
 #'   summarise(cyl_n = n(), cyl_meanmpg = sprintf('%#.2f', mean(mpg)))
-#' mtcars_joined ,- mtcars %>% inner_join(cyl_stats)
+#' mtcars_joined <- mtcars %>% inner_join(cyl_stats)
 #'
 #' p3 <- ggplot(mtcars_joined, aes(x = disp, y = mpg)) + geom_point()
 #' p3 + facet_wrap(
@@ -52,26 +58,58 @@
 #'
 #'
 #' @export
-label_glue <- function(template) {
+label_glue <- function(rows, cols) {
 
   # here's the inner function. label_glue returns this, but it can access the
   # template string given when the user calls label_glue
   label_glue_inner <- function(labels) {
 
-    browser()
-    # i can add extra functionality for facet_wrap
     facet_type <- attr(labels, "facet")
 
-    if(!is.null(facet_type) && facet_type == "wrap") {
-      facet_count <- nrow(labels)
+    if (!is.null(facet_type) & facet_type == "wrap") {
 
-      # convert incoming labels to strings and add extra columns
-      labels = lapply(labels, as.character)
+      # for facet_wrap, convert incoming labels to strings
+      # and add extra columns for numbering
+      facet_count <- nrow(labels)
+      template <- rows
+      labels <- lapply(labels, as.character)
       labels[[".n"]] <- as.character(1:facet_count)
       labels[[".l"]] <- letters[1:facet_count]
       labels[[".L"]] <- toupper(letters[1:facet_count])
+
+    } else if (!is.null(facet_type) & facet_type == "grid") {
+
+      if (numbering_present(cols) | numbering_present(rows)) {
+        stop(paste("Error: the column or row label contains .n, .l or .L.",
+          "label_glue can currently only number the facets in facet_wrap.",
+          "For more info, see",
+          "https://github.com/rensa/stickylabeller/issues/1"))
+      }
+
+      facet_direction <- attr(labels, "type")
+      if (facet_direction == "rows") {
+        template <- rows
+      } else if (facet_direction == "cols") {
+        template <- cols
+      } else {
+        stop(paste("Error: unrecognised facet_direction in label_guide. This",
+          "is probably a bug in stickylabeller. Please report it to",
+          "https://github.com/rensa/stickylabeller/issues"))
+      }
+      labels = lapply(labels, as.character)
+
     } else {
-      # convert incoming labels to strings and add extra columns
+
+      # if no facet type is specified (eg. inside labeller wrapper), just do
+      # the basics
+
+      if (numbering_present(rows)) {
+        stop(paste("Error: the column or row label contains .n, .l or .L.",
+          "label_glue can currently only number the facets in facet_wrap.",
+          "For more info, see",
+          "https://github.com/rensa/stickylabeller/issues/1"))
+      }
+      template <- rows
       labels = lapply(labels, as.character)
     }
 
@@ -80,4 +118,12 @@ label_glue <- function(template) {
 
   class(label_glue_inner) <- c("function", "labeller")
   return(label_glue_inner)
+}
+
+# helper functions
+
+numbering_present <- function(template) {
+  # TODO - need a more sophisticated regex that can catch more complex
+  # expressions including numbering columns
+  return(grepl("{[\\s\\W]*\\.[nlL](?!\\w)[\\s\\W]*}", template, perl = TRUE))
 }
