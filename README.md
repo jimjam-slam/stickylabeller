@@ -32,17 +32,19 @@ ggplot(mydf) +
     labeller = label_glue('Red is {red}\nand blue is {blue}'))
 ```
 
-[pic here]
+![facet_wrap labelled with two facet column values]('man/figures/example1.png')
 
 ```
 ggplot(mydf) +
   geom_point(aes(x = x, y = y)) +
   facet_grid(
-  red ~ blue,
-  labeller = labeller(
-    .rows = label_glue('Red is {red}'),
-    .cols = label_glue('Blue is {blue}')))
+    red ~ blue,
+    labeller = label_glue(
+      rows = 'Red is {red}',
+      cols = 'Blue is {blue}'))
 ```
+
+![facet_grid labelled with one facet column value on each margin]('man/figures/example2.png')
 
 Your `label_glue` labeller can refer to any of the data frame columns included in the facetting formula. It can also use those columns in expressions, like:
 
@@ -61,8 +63,14 @@ As well as the columns you include in the facetting specification, `stickylabell
 So you can automatically number your facets like:
 
 ```r
-label_glue('({.l}) Red is {toupper(red)}\nand blue is {blue}')
+ggplot(mydf) +
+  geom_point(aes(x = x, y = y)) +
+  facet_wrap(
+    ~ red + blue,
+    labeller = label_glue('({.l}) Red is {toupper(red)}\nand blue is {blue}'))
 ```
+
+![facet_wrap labelled with two facet column values and numbered (a), (b), (c), ...]('man/figures/example3.png')
 
 #### Limitations
 
@@ -74,7 +82,7 @@ label_glue('({.l}) Red is {toupper(red)}\nand blue is {blue}')
 There are a couple of ways to include summary statistics using `stickylabeller`. The most flexible way (but probably not the most performant, if you're working with a _massive_ dataset) is to summarise your data and join it back to the original data, so that the summary statistics appear as new columns in the original data. Then include the summary columns in your facetting specification:
 
 ```
-library(tidyverse)
+library(dplyr)
 
 # summarise the data
 multi_summary = mydf %>%
@@ -97,6 +105,9 @@ ggplot(mydf) +
       '({.L}) Red = {red}, blue = {blue}\n(mean = {mean_y}, SD = {sd_y})'))
 
 ```
+
+![facet_wrap labelled with two facet column values and two summary statistics, each numbered (a), (b), (c), ...]('man/figures/example4.png')
+
 This works even if you're facetting by multiple columns and summarising by multiple columns. Keep in mind, however, that if you're going to continue to work with the data after plotting, you might want to drop the summary columns in order to avoid confusing yourself.
 
 An alternate way to accomplish this is to convert each of your summary statistics into a vector named for the values of your facet column. This gets really messy with more than one facet column, though!
