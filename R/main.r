@@ -8,10 +8,13 @@
 #' \code{rows} and \code{cols}.
 #'
 #' If you're using
-#' the labeller with \code{facet_wrap}, you can also use \code{.n},
-#' \code{.l} or \code{.L} to add numbers or letters to each facet. The latter
-#' two only presently support up to 26 facets.
-#'
+#' the labeller with \code{facet_wrap}, you can also use these variables in
+#' \code{glue} strings:
+#' \itemize{
+#'   \item \code{.n} to add numbers to each facet;
+#'   \item \code{.l} or \code{.L} to add lower- or uppercase letters (only up to 26 facets are supported);
+#'   \item \code{.r} or \code{.R} to add lower or uppercase Roman numerals.
+#' }
 #' @param rows A string to be used as the template by \code{glue}.
 #' @param cols A string to be used as the template by \code{glue}.
 #'
@@ -27,7 +30,8 @@
 #'   ~  Species,
 #'   labeller = label_glue('Sepal and petal lengths in {Species} plants'))
 #'
-#' # distinguish panels with .n (numbers), .l (lowercase) or .L (uppercase)
+#' # distinguish panels with .n (numbers), .l (lowercase), .L (uppercase),
+#' # .r or .R (Roman)
 #' # (this is only available with facet_wrap presently!)
 #' p1 + facet_wrap(
 #'   ~  Species,
@@ -76,6 +80,8 @@ label_glue <- function(rows, cols) {
       labels[[".n"]] <- as.character(1:facet_count)
       labels[[".l"]] <- letters[1:facet_count]
       labels[[".L"]] <- toupper(letters[1:facet_count])
+      labels[[".r"]] <- as.character(utils::as.roman(1:facet_count))
+      labels[[".R"]] <- tolower(as.character(utils::as.roman(1:facet_count)))
 
     } else if (!is.null(facet_type) & facet_type == "grid") {
 
@@ -125,5 +131,5 @@ label_glue <- function(rows, cols) {
 numbering_present <- function(template) {
   # TODO - need a more sophisticated regex that can catch more complex
   # expressions including numbering columns
-  return(grepl("{[\\s\\W]*\\.[nlL](?!\\w)[\\s\\W]*}", template, perl = TRUE))
+  return(grepl("{[\\s\\W]*\\.[nlLrR](?!\\w)[\\s\\W]*}", template, perl = TRUE))
 }

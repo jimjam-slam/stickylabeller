@@ -25,9 +25,13 @@ using it with \code{facet_grid} directly, you need to give two templates:
 }
 \details{
 If you're using
-the labeller with \code{facet_wrap}, you can also use \code{.n},
-\code{.l} or \code{.L} to add numbers or letters to each facet. The latter
-two only presently support up to 26 facets.
+the labeller with \code{facet_wrap}, you can also use these variables in
+\code{glue} strings:
+\itemize{
+  \item \code{.n} to add numbers to each facet;
+  \item \code{.l} or \code{.L} to add lower- or uppercase letters (only up to 26 facets are supported);
+  \item \code{.r} or \code{.R} to add lower or uppercase Roman numerals.
+}
 }
 \examples{
 library(ggplot2)

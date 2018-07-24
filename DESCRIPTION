@@ -9,7 +9,8 @@ Encoding: UTF-8
 LazyData: true
 Imports:
   glue,
-  stats
+  stats,
+  utils
 Suggests:
   dplyr,
   ggplot2
