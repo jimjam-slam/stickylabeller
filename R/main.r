@@ -73,9 +73,9 @@ label_glue <- function(rows, cols) {
       facet_count <- nrow(labels)
       template <- rows
       labels <- lapply(labels, as.character)
-      labels[[".n"]] <- as.character(1:facet_count)
-      labels[[".l"]] <- letters[1:facet_count]
-      labels[[".L"]] <- toupper(letters[1:facet_count])
+      labels[[".n"]] <- as.character(seq_len(facet_count))
+      labels[[".l"]] <- make_letters(seq_len(facet_count))
+      labels[[".L"]] <- toupper(make_letters(seq_len(facet_count)))
 
     } else if (!is.null(facet_type) & facet_type == "grid") {
 
@@ -126,4 +126,23 @@ numbering_present <- function(template) {
   # TODO - need a more sophisticated regex that can catch more complex
   # expressions including numbering columns
   return(grepl("{[\\s\\W]*\\.[nlL](?!\\w)[\\s\\W]*}", template, perl = TRUE))
+}
+
+# adapted from cellranger::letter_to_num
+make_letters <- function(y) {
+  jfun <- function(div) {
+    if (is.na(div)) {
+      return(NA_character_)
+    }
+    ret <- integer()
+    while (div > 0) {
+      remainder <- ((div - 1) %% 26) + 1
+      ret <- c(remainder, ret)
+      div <- (div - remainder) %/% 26
+    }
+    paste(letters[ret], collapse = "")
+  }
+  ret <- vapply(y, jfun, character(1))
+  if (length(ret) == 0) return(ret) # vapply doesn't always work
+  ifelse(ret == "", NA_character_, ret)
 }
