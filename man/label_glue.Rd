@@ -26,8 +26,7 @@ using it with \code{facet_grid} directly, you need to give two templates:
 \details{
 If you're using
 the labeller with \code{facet_wrap}, you can also use \code{.n},
-\code{.l} or \code{.L} to add numbers or letters to each facet. The latter
-two only presently support up to 26 facets.
+\code{.l} or \code{.L} to add numbers or letters to each facet.
 }
 \examples{
 library(ggplot2)

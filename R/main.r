@@ -9,8 +9,7 @@
 #'
 #' If you're using
 #' the labeller with \code{facet_wrap}, you can also use \code{.n},
-#' \code{.l} or \code{.L} to add numbers or letters to each facet. The latter
-#' two only presently support up to 26 facets.
+#' \code{.l} or \code{.L} to add numbers or letters to each facet.
 #'
 #' @param rows A string to be used as the template by \code{glue}.
 #' @param cols A string to be used as the template by \code{glue}.
@@ -131,9 +130,7 @@ numbering_present <- function(template) {
 # adapted from cellranger::letter_to_num
 make_letters <- function(y) {
   jfun <- function(div) {
-    if (is.na(div)) {
-      return(NA_character_)
-    }
+    if (is.na(div)) return(NA_character_)
     ret <- integer()
     while (div > 0) {
       remainder <- ((div - 1) %% 26) + 1
