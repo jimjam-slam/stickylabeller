@@ -7,13 +7,12 @@
 #' using it with \code{facet_grid} directly, you need to give two templates:
 #' \code{rows} and \code{cols}.
 #'
-#' If you're using
-#' the labeller with \code{facet_wrap}, you can also use these variables in
-#' \code{glue} strings:
+#' If you're using the labeller with \code{facet_wrap}, you can also use these
+#' variables in \code{glue} strings:
 #' \itemize{
 #'   \item \code{.n} to add numbers to each facet;
-#'   \item \code{.l} or \code{.L} to add lower- or uppercase letters (only up to 26 facets are supported);
-#'   \item \code{.r} or \code{.R} to add lower or uppercase Roman numerals.
+#'   \item \code{.l} or \code{.L} to add lower- or uppercase letters
+#'   \item \code{.r} or \code{.R} to add lower or uppercase roman numerals.
 #' }
 #' @param rows A string to be used as the template by \code{glue}.
 #' @param cols A string to be used as the template by \code{glue}.
@@ -31,8 +30,7 @@
 #'   labeller = label_glue('Sepal and petal lengths in {Species} plants'))
 #'
 #' # distinguish panels with .n (numbers), .l (lowercase), .L (uppercase),
-#' # .r or .R (Roman)
-#' # (this is only available with facet_wrap presently!)
+#' # .r or .R (lower- or uppercase roman) if you're using facet_wrap
 #' p1 + facet_wrap(
 #'   ~  Species,
 #'   labeller = label_glue('({.n}) {Species}'))
@@ -77,9 +75,9 @@ label_glue <- function(rows, cols) {
       facet_count <- nrow(labels)
       template <- rows
       labels <- lapply(labels, as.character)
-      labels[[".n"]] <- as.character(1:facet_count)
-      labels[[".l"]] <- letters[1:facet_count]
-      labels[[".L"]] <- toupper(letters[1:facet_count])
+      labels[[".n"]] <- as.character(seq_len(facet_count))
+      labels[[".l"]] <- make_letters(seq_len(facet_count))
+      labels[[".L"]] <- toupper(make_letters(seq_len(facet_count)))
       labels[[".r"]] <- tolower(as.character(utils::as.roman(1:facet_count)))
       labels[[".R"]] <- as.character(utils::as.roman(1:facet_count))
 
@@ -126,10 +124,31 @@ label_glue <- function(rows, cols) {
   return(label_glue_inner)
 }
 
-# helper functions
+# helper functions ============================================================
 
+# numbering_present: quick regex to catch numbering variables when they
+# aren't supported
 numbering_present <- function(template) {
   # TODO - need a more sophisticated regex that can catch more complex
   # expressions including numbering columns
   return(grepl("{[\\s\\W]*\\.[nlLrR](?!\\w)[\\s\\W]*}", template, perl = TRUE))
 }
+
+# make_letters: builds a sequence of letters to extend past 26 facets
+# adapted from cellranger::letter_to_num
+make_letters <- function(y) {
+  jfun <- function(div) {
+    if (is.na(div)) return(NA_character_)
+    ret <- integer()
+    while (div > 0) {
+      remainder <- ((div - 1) %% 26) + 1
+      ret <- c(remainder, ret)
+      div <- (div - remainder) %/% 26
+    }
+    paste(letters[ret], collapse = "")
+  }
+  ret <- vapply(y, jfun, character(1))
+  if (length(ret) == 0) return(ret) # vapply doesn't always work
+  ifelse(ret == "", NA_character_, ret)
+}
+

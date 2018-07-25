@@ -24,13 +24,12 @@ using it with \code{facet_grid} directly, you need to give two templates:
 \code{rows} and \code{cols}.
 }
 \details{
-If you're using
-the labeller with \code{facet_wrap}, you can also use these variables in
-\code{glue} strings:
+If you're using the labeller with \code{facet_wrap}, you can also use these
+variables in \code{glue} strings:
 \itemize{
   \item \code{.n} to add numbers to each facet;
-  \item \code{.l} or \code{.L} to add lower- or uppercase letters (only up to 26 facets are supported);
-  \item \code{.r} or \code{.R} to add lower or uppercase Roman numerals.
+  \item \code{.l} or \code{.L} to add lower- or uppercase letters
+  \item \code{.r} or \code{.R} to add lower or uppercase roman numerals.
 }
 }
 \examples{
@@ -43,8 +42,8 @@ p1 + facet_wrap(
   ~  Species,
   labeller = label_glue('Sepal and petal lengths in {Species} plants'))
 
-# distinguish panels with .n (numbers), .l (lowercase) or .L (uppercase)
-# (this is only available with facet_wrap presently!)
+# distinguish panels with .n (numbers), .l (lowercase), .L (uppercase),
+# .r or .R (lower- or uppercase roman) if you're using facet_wrap
 p1 + facet_wrap(
   ~  Species,
   labeller = label_glue('({.n}) {Species}'))
