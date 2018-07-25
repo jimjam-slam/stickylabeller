@@ -80,8 +80,8 @@ label_glue <- function(rows, cols) {
       labels[[".n"]] <- as.character(1:facet_count)
       labels[[".l"]] <- letters[1:facet_count]
       labels[[".L"]] <- toupper(letters[1:facet_count])
-      labels[[".r"]] <- as.character(utils::as.roman(1:facet_count))
-      labels[[".R"]] <- tolower(as.character(utils::as.roman(1:facet_count)))
+      labels[[".r"]] <- tolower(as.character(utils::as.roman(1:facet_count)))
+      labels[[".R"]] <- as.character(utils::as.roman(1:facet_count))
 
     } else if (!is.null(facet_type) & facet_type == "grid") {
 
