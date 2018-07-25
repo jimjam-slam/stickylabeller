@@ -59,6 +59,8 @@ As well as the columns you include in the facetting specification, `stickylabell
 - `.n` numbers the facets numerically: `"1"`, `"2"`, `"3"`...
 - `.l` numbers the facets using lowercase letters: `"a"`, `"b"`, `"c"`...
 - `.L` numbers the facets using uppercase letters: `"A"`, `"B"`, `"C"`...
+- `.r` numbers the facets using lowercase Roman numerals: `"i"`, `"ii"`, `"iii"`...
+- `.R` numbers the facets using uppercase Roman numerals: `"I"`, `"II"`, `"III"`...
 
 So you can automatically number your facets like:
 
@@ -74,7 +76,6 @@ ggplot(mydf) +
 
 #### Limitations
 
-* `.l` and `.L` only currently support up to 26 facets—I haven't yet implemented a way for them to continue with AA, AB, AC, etc.
 * `.n`, `.l` and `.L` only work with `facet_wrap` for now. See [Issue #1](https://github.com/rensa/stickylabeller/issues/1).
 
 ### Including summary statistics in facet labels
