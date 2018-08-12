@@ -1,16 +1,21 @@
 Package: stickylabeller
 Title: Sticky Labeller
-Version: 0.0.0.9100
+Version: 0.0.0.9200
 Authors@R: person("James", "Goldie", email = "me@rensa.co", role = c("aut", "cre"))
-Description: Create facet labels for ggplot2 using the glue package. Also includes some helpers for sequentially labelling your facets.
+Description:
+  Create facet labels for ggplot2 using the glue package. Also includes helpers
+  for sequentially labelling your facets and an alternate facetting spec,
+  facet_wrap_overlay.
 Depends: R (>= 3.1)
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Imports:
   ggplot2,
+  grid,
   glue,
   gtable,
+  rlang,
   stats,
   utils,
 Suggests:
