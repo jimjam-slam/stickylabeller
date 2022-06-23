@@ -21,6 +21,9 @@
 #' [glue::glue_data()].
 #' @param col_template A string to be used as the template by
 #' [glue::glue_data()].
+#' @param summary_data A data frame of additional  variables to reference in
+#'   the templates. Must also include the facet grouping variables.
+#' @param ... Other arguments to be passed to [`glue::glue_data()`]
 #'
 #' @return A labelling function that you can give to the `labeller` argument
 #'   of the facetting function.
@@ -65,13 +68,20 @@
 #'
 #'
 #' @export
-label_glue <- function(row_template, col_template, summary_data) {
+label_glue <- function(row_template, col_template, summary_data = NULL, ...) {
 
   # here's the inner function. label_glue returns this, but it can access the
   # template string given when the user calls label_glue
   label_glue_inner <- function(labels) {
 
+    # grab facet info before a possible merge with summary data nukes it
     facet_type <- attr(labels, "facet")
+    facet_direction <- attr(labels, "type")
+
+    # merge summary_data if it exists
+    if (is.data.frame(summary_data)) {
+      labels <- merge(labels, summary_data)
+    }
 
     if (!is.null(facet_type) & facet_type == "wrap") {
 
@@ -92,20 +102,19 @@ label_glue <- function(row_template, col_template, summary_data) {
         stop(paste("Error: the column or row label contains .n, .l or .L.",
           "label_glue can currently only number the facets in facet_wrap.",
           "For more info, see",
-          "https://github.com/rensa/stickylabeller/issues/1"))
+          "https://github.com/jimjam-slam/stickylabeller/issues/1"))
       }
 
-      facet_direction <- attr(labels, "type")
-      if (facet_direction == "row_template") {
+      if (facet_direction == "rows") {
         template <- row_template
-      } else if (facet_direction == "col_template") {
+      } else if (facet_direction == "cols") {
         template <- col_template
       } else {
         stop(paste("Error: unrecognised facet_direction in label_guide. This",
           "is probably a bug in stickylabeller. Please report it to",
-          "https://github.com/rensa/stickylabeller/issues"))
+          "https://github.com/jimjam-slam/stickylabeller/issues"))
       }
-      labels = lapply(labels, as.character)
+      labels <- lapply(labels, as.character)
 
     } else {
 
@@ -116,13 +125,13 @@ label_glue <- function(row_template, col_template, summary_data) {
         stop(paste("Error: the column or row label contains .n, .l or .L.",
           "label_glue can currently only number the facets in facet_wrap.",
           "For more info, see",
-          "https://github.com/rensa/stickylabeller/issues/1"))
+          "https://github.com/jimjam-slam/stickylabeller/issues/1"))
       }
       template <- row_template
-      labels = lapply(labels, as.character)
+      labels <- lapply(labels, as.character)
     }
 
-    return(list(unname(glue::glue_data(labels, template))))
+    return(list(unname(glue::glue_data(labels, template, ...))))
   }
 
   class(label_glue_inner) <- c("function", "labeller")
