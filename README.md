@@ -4,17 +4,20 @@
 
 # stickylabeller <img src="man/figures/logo.svg" align="right" width="180px" style="padding-left: 1rem;" />
 
+[![](https://jimjam-slam.r-universe.dev/stickylabeller/badges/version.png)](https://jimjam-slam.r-universe.dev/stickylabeller)
+
 The `stickylabeller` package helps you label the facets in your ggplot2
-plots. If you know how to use the
-[`glue`](https://cran.r-project.org/web/packages/glue/index.html)
-package, you know how to use `stickylabeller`!
+plots using
+[`glue`](https://cran.r-project.org/web/packages/glue/index.html).
 
 ## Installation
 
-Install `stickylabeller` from GitHub using `remotes`:
+Install `stickylabeller` from my R-Universe:
 
 ``` r
-remotes::install_github("jimjam-slam/stickylabeller")
+install.packages("stickylabeller", repos = c(
+  "https://jimjam-slam.r-universe.dev",
+  "https://cloud.r-project.org"))
 ```
 
 ## Use
