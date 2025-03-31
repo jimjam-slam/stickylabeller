@@ -1,7 +1,9 @@
 Package: stickylabeller
 Title: Stickylabeller
 Version: 0.1.0.9100
-Authors@R: person("James", "Goldie", email = "me@jamesgoldie.dev", role = c("aut", "cre"))
+Authors@R: c(
+  person("James", "Goldie", email = "me@jamesgoldie.dev", role = c("aut", "cre")),
+  person("David", "Hugh-Jones", role = "ctb"))
 Description: Create facet labels for ggplot2 using the glue package. Also includes some helpers for sequentially labelling your facets.
 Depends: R (>= 3.1)
 License: MIT + file LICENSE
