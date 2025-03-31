@@ -15,7 +15,7 @@ knitr::opts_chunk$set(
 set.seed(1)
 ```
 
-# stickylabeller
+# stickylabeller <img src="man/figures/logo.svg" align="right" width="180px" style="padding-left: 1rem;" />
 
 The `stickylabeller` package helps you label the facets in your ggplot2 plots. If you know how to use the [`glue`](https://cran.r-project.org/web/packages/glue/index.html) package, you know how to use `stickylabeller`!
 
