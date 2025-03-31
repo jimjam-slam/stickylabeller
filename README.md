@@ -2,7 +2,7 @@
 
 <!-- README.md is generated from README.qmd. Please edit that file -->
 
-# stickylabeller
+# stickylabeller <img src="man/figures/logo.svg" align="right" width="180px" style="padding-left: 1rem;" />
 
 The `stickylabeller` package helps you label the facets in your ggplot2
 plots. If you know how to use the

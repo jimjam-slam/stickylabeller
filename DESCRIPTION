@@ -1,6 +1,6 @@
 Package: stickylabeller
-Title: Stickylabeller
-Version: 0.1.0.9100
+Title: Quickly Number Ggplot2 Facets
+Version: 1.0.0
 Authors@R: c(
   person("James", "Goldie", email = "me@jamesgoldie.dev", role = c("aut", "cre")),
   person("David", "Hugh-Jones", role = "ctb"))
