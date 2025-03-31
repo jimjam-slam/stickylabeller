@@ -1,5 +1,6 @@
 
-<!-- README.md is generated from README.rmd. Please edit that file -->
+
+<!-- README.md is generated from README.qmd. Please edit that file -->
 
 # stickylabeller
 
@@ -10,10 +11,10 @@ package, you know how to use `stickylabeller`!
 
 ## Installation
 
-Install `stickylabeller` from GitHub using `devtools`:
+Install `stickylabeller` from GitHub using `remotes`:
 
 ``` r
-devtools::install_github("jimjam-slam/stickylabeller")
+remotes::install_github("jimjam-slam/stickylabeller")
 ```
 
 ## Use
@@ -41,14 +42,8 @@ ggplot(mydf) +
     labeller = label_glue("Red is {red}\nand blue is {blue}"))
 ```
 
-<div class="figure">
-
-<img src="man/figures/README-unnamed-chunk-3-1.png" alt="facet_wrap labelled with two facet column values" width="100%" />
-<p class="caption">
-facet_wrap labelled with two facet column values
-</p>
-
-</div>
+<img src="man/figures/README-unnamed-chunk-3-1.png" style="width:100.0%"
+alt="facet_wrap labelled with two facet column values" />
 
 ``` r
 ggplot(mydf) +
@@ -60,14 +55,8 @@ ggplot(mydf) +
       "Blue is {blue}"))
 ```
 
-<div class="figure">
-
-<img src="man/figures/README-unnamed-chunk-4-1.png" alt="facet_grid labelled with one facet column value on each margin" width="100%" />
-<p class="caption">
-facet_grid labelled with one facet column value on each margin
-</p>
-
-</div>
+<img src="man/figures/README-unnamed-chunk-4-1.png" style="width:100.0%"
+alt="facet_grid labelled with one facet column value on each margin" />
 
 Your `label_glue` labeller can refer to any of the data frame columns
 included in the facetting formula. It can also use those columns in
@@ -82,13 +71,13 @@ my_labeller <- label_glue("Red is {toupper(red)}\nand blue is {blue}")
 As well as the columns you include in the facetting specification,
 `stickylabeller` includes a few helper columns:
 
--   `.n` numbers the facets numerically: `1`, `2`, `3`…
--   `.l` numbers the facets using lowercase letters: `a`, `b`, `c`…
--   `.L` numbers the facets using uppercase letters: `A`, `B`, `C`…
--   `.r` numbers the facets using lowercase Roman numerals: `i`, `ii`,
-    `iii`…
--   `.R` numbers the facets using uppercase Roman numerals: `I`, `II`,
-    `III`…
+- `.n` numbers the facets numerically: `1`, `2`, `3`…
+- `.l` numbers the facets using lowercase letters: `a`, `b`, `c`…
+- `.L` numbers the facets using uppercase letters: `A`, `B`, `C`…
+- `.r` numbers the facets using lowercase Roman numerals: `i`, `ii`,
+  `iii`…
+- `.R` numbers the facets using uppercase Roman numerals: `I`, `II`,
+  `III`…
 
 So you can automatically number your facets like:
 
@@ -100,20 +89,13 @@ ggplot(mydf) +
     labeller = label_glue("({.l}) Red is {toupper(red)}\nand blue is {blue}"))
 ```
 
-<div class="figure">
-
-<img src="man/figures/README-unnamed-chunk-6-1.png" alt="facet_wrap labelled with sequential lowercase letters: (a), (b), (c) and so on" width="100%" />
-<p class="caption">
-facet_wrap labelled with sequential lowercase letters: (a), (b), (c) and
-so on
-</p>
-
-</div>
+<img src="man/figures/README-unnamed-chunk-6-1.png" style="width:100.0%"
+alt="facet_wrap labelled with sequential lowercase letters: (a), (b), (c) and so on" />
 
 #### Limitations
 
--   `.n`, `.l` and `.L` only work with `facet_wrap` for now. See [Issue
-    #1](https://github.com/jimjam-slam/stickylabeller/issues/1).
+- `.n`, `.l` and `.L` only work with `facet_wrap` for now. See [Issue
+  \#1](https://github.com/jimjam-slam/stickylabeller/issues/1).
 
 ### Including summary statistics in facet labels
 
@@ -137,13 +119,14 @@ library(dplyr)
 #>     intersect, setdiff, setequal, union
 
 # summarise the data
-mydf_stats = mydf %>%
-  group_by(red, blue) %>%
+mydf_stats = mydf |>
+  group_by(red, blue) |>
   summarise(
     mean_y = sprintf("%#.2f", mean(y)),
-    sd_y = sprintf("%#.2f", sd(y))) %>%
+    sd_y = sprintf("%#.2f", sd(y))) |>
   ungroup()
-#> `summarise()` has grouped output by 'red'. You can override using the `.groups` argument.
+#> `summarise()` has grouped output by 'red'. You can override using the `.groups`
+#> argument.
 
 # pass the summary data onto label_glue
 ggplot(mydf) +
@@ -155,15 +138,8 @@ ggplot(mydf) +
       summary_data = mydf_stats))
 ```
 
-<div class="figure">
-
-<img src="man/figures/README-unnamed-chunk-7-1.png" alt="facet_wrap labelled with two facet column values and two summary statistics, each numbered (a), (b), (c) and so on" width="100%" />
-<p class="caption">
-facet_wrap labelled with two facet column values and two summary
-statistics, each numbered (a), (b), (c) and so on
-</p>
-
-</div>
+<img src="man/figures/README-unnamed-chunk-7-1.png" style="width:100.0%"
+alt="facet_wrap labelled with two facet column values and two summary statistics, each numbered (a), (b), (c) and so on" />
 
 Have fun! If you hit any snags, please feel free to [file an issue
 here](https://github.com/jimjam-slam/stickylabeller/issues) so that I

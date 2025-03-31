@@ -1,8 +1,8 @@
 ---
-output: github_document
+format: gfm
 ---
 
-<!-- README.md is generated from README.rmd. Please edit that file -->
+<!-- README.md is generated from README.qmd. Please edit that file -->
 
 ```{r}
 #| include: false
@@ -12,6 +12,7 @@ knitr::opts_chunk$set(
   fig.path = "man/figures/README-",
   out.width = "100%"
 )
+set.seed(1)
 ```
 
 # stickylabeller
@@ -20,11 +21,11 @@ The `stickylabeller` package helps you label the facets in your ggplot2 plots. I
 
 ## Installation
 
-Install `stickylabeller` from GitHub using `devtools`:
+Install `stickylabeller` from GitHub using `remotes`:
 
 ```{r}
 #| eval: false
-devtools::install_github("jimjam-slam/stickylabeller")
+remotes::install_github("jimjam-slam/stickylabeller")
 ```
 
 ## Use
@@ -108,11 +109,11 @@ library(magrittr)
 library(dplyr)
 
 # summarise the data
-mydf_stats = mydf %>%
-  group_by(red, blue) %>%
+mydf_stats = mydf |>
+  group_by(red, blue) |>
   summarise(
     mean_y = sprintf("%#.2f", mean(y)),
-    sd_y = sprintf("%#.2f", sd(y))) %>%
+    sd_y = sprintf("%#.2f", sd(y))) |>
   ungroup()
 
 # pass the summary data onto label_glue
