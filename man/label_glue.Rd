@@ -4,32 +4,43 @@
 \alias{label_glue}
 \title{Label facets with a string template.}
 \usage{
-label_glue(rows, cols)
+label_glue(row_template, col_template, summary_data = NULL, ...)
 }
 \arguments{
-\item{rows}{A string to be used as the template by \code{glue}.}
+\item{row_template}{A string to be used as the template by
+\code{\link[glue:glue]{glue::glue_data()}}.}
 
-\item{cols}{A string to be used as the template by \code{glue}.}
+\item{col_template}{A string to be used as the template by
+\code{\link[glue:glue]{glue::glue_data()}}.}
+
+\item{summary_data}{A data frame of additional  variables to reference in
+the templates. Must also include the facet grouping variables.}
+
+\item{...}{Other arguments to be passed to \code{\link[glue:glue]{glue::glue_data()}}}
 }
 \value{
 A labelling function that you can give to the \code{labeller} argument
-  of a \code{facet_*} function.
+of the facetting function.
 }
 \description{
-\code{label_glue} returns a labeller function that you can give to the
-\code{labeller} argument of a \code{facet_*} function. If you're using
-\code{label_glue} with \code{facet_wrap} or you're individually supplying
-labellers to each variable, you only need one string template. If you're
-using it with \code{facet_grid} directly, you need to give two templates:
-\code{rows} and \code{cols}.
+Returns a labeller function that you can give to the \code{labeller} argument of
+a \verb{facet_*} function.
 }
 \details{
-If you're using the labeller with \code{facet_wrap}, you can also use these
-variables in \code{glue} strings:
+If you're using \code{\link[=label_glue]{label_glue()}} with \code{\link[ggplot2:facet_wrap]{ggplot2::facet_wrap()}} or you're
+individually supplying labellers to each variable, you only need one string
+template: \code{row_template}.
+
+If you're using it with \code{\link[ggplot2:facet_grid]{ggplot2::facet_grid()}}, you need to supply two
+templates: one for the rows (\code{row_template}) and one for the columns
+(\code{col_template}).
+
+If you're using the labeller with \code{\link[ggplot2:facet_wrap]{ggplot2::facet_wrap()}}, you can also
+use these variables in the templates:
 \itemize{
-  \item \code{.n} to add numbers to each facet;
-  \item \code{.l} or \code{.L} to add lower- or uppercase letters
-  \item \code{.r} or \code{.R} to add lower or uppercase roman numerals.
+\item \code{.n} to add numbers to each facet;
+\item \code{.l} or \code{.L} to add lower- or uppercase letters
+\item \code{.r} or \code{.R} to add lower- or uppercase roman numerals.
 }
 }
 \examples{
@@ -40,21 +51,21 @@ library(stickylabeller)
 p1 <- ggplot(iris, aes(x = Sepal.Length, y = Petal.Length)) + geom_point()
 p1 + facet_wrap(
   ~  Species,
-  labeller = label_glue('Sepal and petal lengths in {Species} plants'))
+  labeller = label_glue("Sepal and petal lengths in {Species} plants"))
 
 # distinguish panels with .n (numbers), .l (lowercase), .L (uppercase),
 # .r or .R (lower- or uppercase roman) if you're using facet_wrap
 p1 + facet_wrap(
   ~  Species,
-  labeller = label_glue('({.n}) {Species}'))
+  labeller = label_glue("({.n}) {Species}"))
 
 # you can also use label_glue with facet_grid
 p2 <- ggplot(mtcars, aes(x = disp, y = mpg)) + geom_point()
 p2 + facet_grid(
   gear ~ cyl,
   labeller = label_glue(
-    rows = '{gear} gears',
-    cols = '{cyl} cylinders'))
+    row_template = "{gear} gears",
+    col_template = "{cyl} cylinders"))
 
 # you can add summary statistics in a couple of ways. the easiest (in terms
 # of plot code) is to join a summary back into the original data and to add
@@ -62,14 +73,14 @@ p2 + facet_grid(
 library(dplyr)
 cyl_stats <- mtcars \%>\%
   group_by(cyl) \%>\%
-  summarise(cyl_n = n(), cyl_meanmpg = sprintf('\%#.2f', mean(mpg)))
+  summarise(cyl_n = n(), cyl_meanmpg = sprintf("\%#.2f", mean(mpg)))
 mtcars_joined <- mtcars \%>\% inner_join(cyl_stats)
 
 p3 <- ggplot(mtcars_joined, aes(x = disp, y = mpg)) + geom_point()
 p3 + facet_wrap(
   ~ cyl + cyl_n + cyl_meanmpg,
   labeller = label_glue(
-    '({.l}) {cyl} cylinders\\n(n = {cyl_n}, mean = {cyl_meanmpg})'))
+    "({.l}) {cyl} cylinders\n(n = {cyl_n}, mean = {cyl_meanmpg})"))
 
 
 }

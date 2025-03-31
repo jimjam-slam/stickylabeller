@@ -16,7 +16,7 @@
 #'   * `.n` to add numbers to each facet;
 #'   * `.l` or `.L` to add lower- or uppercase letters
 #'   * `.r` or `.R` to add lower- or uppercase roman numerals.
-#' }
+#'
 #' @param row_template A string to be used as the template by
 #' [glue::glue_data()].
 #' @param col_template A string to be used as the template by
@@ -140,16 +140,24 @@ label_glue <- function(row_template, col_template, summary_data = NULL, ...) {
 
 # helper functions ============================================================
 
-# numbering_present: quick regex to catch numbering variables when they
-# aren't supported
+#' Detect the use of numbering variables
+#' 
+#' Numbering variables are only supported in string templates when using
+#' [ggplot2::facet_wrap()].
+#' @param template The string template to check
+#' @return A boolean: TRUE if a numbering variable is present.
 numbering_present <- function(template) {
   # TODO - need a more sophisticated regex that can catch more complex
   # expressions including numbering columns
   return(grepl("{[\\s\\W]*\\.[nlLrR](?!\\w)[\\s\\W]*}", template, perl = TRUE))
 }
 
-# make_letters: builds a sequence of letters to extend past 26 facets
-# adapted from cellranger::letter_to_num
+#' Build a sequence of letters to extend past 26 facets, in the style of
+#' spreadsheet column indices (Y, Z, AA, AB, AC, ...).
+#' 
+#' (Adapted from cellranger::letter_to_num)
+#' @param y A vector of indices to create letters for
+#' @return A vector of letters potentially extending past a–z
 make_letters <- function(y) {
   jfun <- function(div) {
     if (is.na(div)) return(NA_character_)
@@ -165,4 +173,3 @@ make_letters <- function(y) {
   if (length(ret) == 0) return(ret) # vapply doesn't always work
   ifelse(ret == "", NA_character_, ret)
 }
-
